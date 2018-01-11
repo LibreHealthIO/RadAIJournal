@@ -1,6 +1,6 @@
 ### Installation - Requirements 
 
-YOu can use 
+You can use 
 1. Pip 
 
 ```
