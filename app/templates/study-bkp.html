@@ -103,6 +103,11 @@
 							<p>{{form.comments.label()}} {{ form.comments }} </p>
 							<p>{{form.submit()}} </p>
 						</form>
+
+						                  <h1>Habari, {{ user.username }}!</h1>
+                        {% for post in posts %}
+                        <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
+                        {% endfor %}
 				</div>
 				<!--/.row -->
 				
