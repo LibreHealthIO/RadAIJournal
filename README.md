@@ -35,6 +35,13 @@ Assumes that you have
 2. The environment with all the pip modules installed 
 3. Updated the config.py file 
 
+```
+FLASK_APP=radaijournal.py
+flask run
+```
+
+Go to localhost:5000 to access the application
+
 ### Some data references 
 
 ```
