@@ -8,7 +8,7 @@ data = [('2','consolidation'),
 
 class LoginForm(FlaskForm):
     username = StringField('Username',validators=[DataRequired()])
-    password = PasswordField('Password',validators=[DataRequired(),Length(min=8, message="The password needs to be at least 8 characters long")])
+    password = PasswordField('Password',validators=[DataRequired()])
     remember_me = BooleanField('Remember me')
     submit = SubmitField('Sign In')
 
