@@ -34,9 +34,11 @@ dependencies:
     - blinker==1.4
     - dominate==2.3.1
     - flask-bootstrap==3.3.7.1
+    - flask-mail==0.9.1
     - flask-mysql==1.4.0
     - flask-nav==0.6
     - flask-navigation==0.2.0
+    - flask-wtf==0.14.2
     - passlib==1.7.1
     - pymysql==0.8.0
     - visitor==0.1.3
