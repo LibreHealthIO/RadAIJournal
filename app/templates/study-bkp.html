@@ -3,6 +3,20 @@
 <div class="container-fluid">
 	<div class="row">
 
+		<nav class="col-sm-3 col-md-2 col-md-1 d-none d-sm-block bg-light sidebar">
+			<ul class="nav nav-pills flex-column">
+				<li class="nav-item">
+					<a class="nav-link active" href="#">Home </a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Worklist</a>
+				</li>
+				<li class="nav-item">
+					<a class="nav-link" href="#">Stats</a>
+				</li>
+			</ul>
+		</nav>
+
 		<main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
 
 			<div class="container-fluid">
@@ -42,7 +56,7 @@
 						</div>
 						<div class="form-check form-check-inline">
 							<input class="form-check-input" type="radio" name="inlineRadioOptions" id="pneumoniaRadio1" value="1">
-							<label class="form-check-label" for="pneumoniaRadio1">Diagnostic of pneumonia</label>
+							<label class="form-check-label" for="pneumoniaRadio1">Diagnostic of Pneumonia</label>
 						</div>
 						<div class="form-check form-check-inline">
 							<input class="form-check-input" type="radio" name="inlineRadioOptions" id="pneumoniaRadio0" value="0">
@@ -73,6 +87,25 @@
 				</div>
 				<!--/.row -->
 
+				<div class="row">
+					<h1> Xray Reporting</h1>
+						<form action="" method="post">
+							{{form.hidden_tag()}}
+
+							<p>
+								{{form.pneumonia.label}} <br>
+								{{form.pneumonia(size=32)}}
+							</p>
+							<p>
+								{{form.findings.label}} <br>
+								{{form.findings(size=32)}}
+							</p>
+							<p>{{form.comments.label()}} {{ form.comments }} </p>
+							<p>{{form.submit()}} </p>
+						</form>
+				</div>
+				<!--/.row -->
+				
 			</div>
 			<!--/.container -->
 

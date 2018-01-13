@@ -11,6 +11,7 @@ from PIL import Image
 from io import StringIO
 
 from app import app
+from app.forms import LoginForm,XrayForm
 
 def serve_pil_image(pil_img):
     img_io = StringIO()
@@ -45,9 +46,22 @@ def stats():
 @app.route('/study/<study_id>')
 def study(study_id):
     studyid = study_id
+    form = XrayForm()
+    file_name = "00006484_000.png"
+    return render_template('study.html',study_id=studyid,user_image = file_name,form=form)
+
+@app.route('/login',methods=['GET','POST'])
+def login():
+    form = LoginForm()
+    if form.validate_on_submit():
+        #...
+        return redirect(url_for('index'))
+    return render_template("login.html",title="Sign In", form=form)
+ 
+    """
+
     #img = Image.new('RGB',"/Users/judywawira/Programming/RadAIJournal/00006484_000.png")
     #file_name = "/Users/judywawira/Programming/RadAIJournal/00006484_000.png"
-    file_name = "00006484_000.png"
-    return render_template('study.html',study_id=studyid,user_image = file_name)
     #return serve_pil_image(img)
     #return send_from_directory('/Users/judywawira/Programming/RadAIJournal','00006484_000.png')
+    """
