@@ -18,11 +18,7 @@ from app import app, db
 from app.forms import LoginForm, XrayForm
 from app.models import User
 
-def serve_pil_image(pil_img):
-    img_io = StringIO()
-    pil_img.save(img_io, 'JPEG', quality=70)
-    img_io.seek(0)
-    return send_file(img_io, mimetype='image/jpeg')
+mydata = pd.read_csv('app/static/FinalWorklist.csv')
 
 @app.route('/')
 @app.route('/index')
@@ -44,22 +40,53 @@ def index():
 @app.route('/worklist')
 @login_required
 def worklist():
-    return render_template('worklist.html')
+    #mydata = pd.read_csv('app/static/FinalWorklist.csv')
+
+    #sample 20 studies from the list 
+    myworklist = mydata.sample(20)
+
+    myworklist_data = []
+    for index,row in myworklist.iterrows():
+        mydict = {
+            "img":row.img,
+            "pt_id":row.pt_id,
+            "study": "CXR",
+            "age":row.age,
+            "sex":row.sex
+        }
+
+        myworklist_data.append(mydict)
+
+    return render_template('worklist.html',myworklist_data=myworklist_data)
 
 @app.route('/stats')
 @login_required
 def stats():
     return render_template('stats.html')
 
-@app.route('/study/<img_id>')
+@app.route('/study/<img_id>',methods=['GET','POST'])
 @login_required
 def study(img_id):
-    #studyid = study_id
     form = XrayForm()
-    file_name = 'cxr/' + str(img_id) #"00006484_000.png"
-    print (file_name)
-    return render_template('study.html',user_image = file_name,form=form)
-    #return render_template('study.html',study_id=studyid,user_image = file_name,form=form)
+    if request.method == 'GET':
+        file_name = 'cxr/' + str(img_id) 
+        
+        #search for patient ID, Age and sex for the specific image we are rendering 
+        img_data = mydata.loc[mydata['img'] == img_id]
+        if len(img_data) > 0:
+            #means there are metadata for that image 
+            for index,row in img_data.iterrows():
+                img_details = {
+                    'pt_id' : row.pt_id,
+                    'age' : row.age,
+                    'sex' : row.sex
+                }
+
+        return render_template('study.html',user_image = file_name, image_details = img_details,
+            form=form)
+        #return render_template('study.html',study_id=studyid,user_image = file_name,form=form)
+    elif request.method == 'POST':
+        pass
 
 @app.route('/login',methods=['GET','POST'])
 def login():
@@ -84,28 +111,10 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route("/tables")
-@login_required
-def show_tables():
-    mydata = pd.read_csv('app/static/FinalWorklist.csv')
-
-    #sample 20 studies from the list 
-    myworklist = mydata.sample(20)
-
-    myworklist_data = []
-    for index,row in myworklist.iterrows():
-        mydict = {
-            "img":row.img,
-            "pt_id":row.pt_id,
-            "study": "CXR",
-            "age":row.age,
-            "sex":row.sex
-        }
-
-        myworklist_data.append(mydict)
-
-    return render_template('view.html',myworklist_data=myworklist_data)
-
 @app.route("/register")
 def register():
     return(url_for('index'))
+
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
