@@ -24,7 +24,6 @@ $ source my_project/bin/activate
 ```
 
 3. Install the python modules using the requirements file
-
 ```
 $ pip install -r requirements.txt
 ```
@@ -62,7 +61,7 @@ $ FLASK_APP=radaijournal.py
 $ flask run
 ```
 
-Go to localhost:5000 to access the application
+Go to <a href="http://localhost:5000"> http://localhost:5000 </a>to access the application
 
 ### Contributors 
 1. Judy Gichoya 
