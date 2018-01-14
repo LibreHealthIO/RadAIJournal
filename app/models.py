@@ -32,6 +32,8 @@ class Report(db.Model):
     comments = db.Column(db.Text)
     timestamp = db.Column(db.DateTime,index=True,default=datetime.utcnow)
     user_id = db.Column(db.Integer,db.ForeignKey('user.id'))
+    ground_truth = db.Column(db.Integer)
+    prediction = db.Column(db.Integer)
 
     def __repr__(self):
         return 'Pneumonia {}>'.format(self.pneumonia)
