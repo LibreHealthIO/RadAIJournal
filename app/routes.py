@@ -16,7 +16,7 @@ from io import StringIO
 
 from app import app, db
 from app.forms import LoginForm, XrayForm
-from app.models import User
+from app.models import User , Report
 
 mydata = pd.read_csv('app/static/FinalWorklist.csv')
 
@@ -40,8 +40,10 @@ def index():
 @app.route('/worklist')
 @login_required
 def worklist():
-    #mydata = pd.read_csv('app/static/FinalWorklist.csv')
+    #search the DB for all studies read by the current user 
 
+    # Drop them from the dataframe before sampling them again to create the worklist 
+    
     #sample 20 studies from the list 
     myworklist = mydata.sample(20)
 
@@ -69,6 +71,7 @@ def stats():
 def study(img_id):
     form = XrayForm()
     if request.method == 'GET':
+        
         file_name = 'cxr/' + str(img_id) 
         
         #search for patient ID, Age and sex for the specific image we are rendering 
@@ -81,12 +84,50 @@ def study(img_id):
                     'age' : row.age,
                     'sex' : row.sex
                 }
-
-        return render_template('study.html',user_image = file_name, image_details = img_details,
-            form=form)
-        #return render_template('study.html',study_id=studyid,user_image = file_name,form=form)
+        return render_template('study.html',user_image = file_name, image_details = img_details,img_id = img_id, form=form)
     elif request.method == 'POST':
-        pass
+        #validate that the forms data is correct 
+        # Pneumonia must be selected
+        if request.form.get('pneumonia'):
+            _pneumonia = request.form.get('pneumonia')
+        else:
+            #pneumonia field was not selected 
+            flash("Pneumonia diagnosis must be selected !",category="danger")
+            return redirect(url_for('study',img_id = img_id))
+
+        #now we have pneumonia we can check if other fields are present and save them
+        if request.form.get('infiltrates'):
+            infiltrates = request.form.get('infiltrates')
+        else:
+            infiltrates = '0'
+
+        if request.form.get('consolidation'):
+            consolidation = request.form.get('consolidation')
+        else:
+            consolidation = '0'
+
+        if request.form.get('atelectasis'):
+            atelectasis = request.form.get('atelectasis')
+        else:
+            atelectasis = '0'
+
+        if request.form.get('comments'):
+            comments = request.form.get('comments')
+        else:
+            comments = ''
+        
+        #save our cxr report
+        try:
+            report = Report(img_id = img_id, pneumonia = _pneumonia, consolidation=consolidation,
+            infiltrates=infiltrates, atelectasis=atelectasis, comments=comments, user_id=current_user.id)
+            db.session.add(report)
+            db.session.commit()
+            flash("Report saved successfully!", 'success')
+        except:
+            flash("CXR report was NOT saved successfully","danger")
+            return redirect(url_for('study',img_id = img_id))
+
+        return redirect(url_for('worklist'))
 
 @app.route('/login',methods=['GET','POST'])
 def login():
@@ -96,7 +137,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid username or password')
+            flash('Invalid username or password',category='danger')
             return redirect(url_for('login'))
         login_user(user, remember = form.remember_me.data)
         next_page = request.args.get('next')

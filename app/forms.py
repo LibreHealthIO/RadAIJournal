@@ -13,7 +13,9 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Sign In')
 
 class XrayForm(FlaskForm):
-    pneumonia = RadioField('Pneumonia Diagnosis',choices=[('1','Diagnostic of Pneumonia'),('0','Negative for pneumonia')],validators=[DataRequired()])
-    findings = SelectMultipleField("Select all applicable diagnosis",choices=data, validators=[DataRequired()])
+    pneumonia = StringField('Pneumonia Diagnosis',validators=[DataRequired()])
+    consolidation = StringField('Consolidation')
+    infiltrates = StringField('Infiltrates')
+    atelectasis = StringField('Atelectasis')
     comments = TextField('Comments')
     submit = SubmitField('Save Report')
