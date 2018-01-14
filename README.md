@@ -1,23 +1,52 @@
 ### Installation - Requirements 
+1. Python 
+2. Virtualenv 
+3. Mysql 
 
-You can use 
-1. Pip 
-
-```
-pip install -r requirements.txt
-```
-
-2. Anaconda  
-
-```
-conda env create -f flask.yml
-```
 
 ### Configuration 
 
 The application config files reside in  ```config.py```
+Edit the file to update your mysql username and password
+
+### Installation - Steps
+
+1. Set up python 
+```
+$ python --version
+```
+
+2. Set up your virtual environment in the project folder
+```
+$ pip install virtualenv
+$ git clone https://gitlab.com/librehealth/RadAIJournal.git
+$ cd RadAIJournal
+$ virtualenv venv
+
+source my_project/bin/activate
+```
+
+3. Install the python modules using the requirements file
+
+```
+pip install -r requirements.txt
+
+```
 
 ### Getting the database ready 
+
+The application relies on a  mysql backend 
+**Note** : When working with database servers such as MySQL and PostgreSQL, you have to create the database in the database server before running upgrade.
+
+In this case our database name is radAI
+```
+mysql -u  -p
+
+mysql> CREATE DATABASE radAI;
+
+```
+
+To set this up on a new installation , delete the **migrations** folder  then run the following commands
 
 ```
 FLASK_APP=radaijournal.py
@@ -26,29 +55,6 @@ flask db migrate  #generates the migration script
 flask db upgrade  #Applies the changes to the database 
 ```
 
-#### MySQL backend
-
-```
-mysql -u  -p
-
-mysql> CREATE DATABASE radAI;
-
-mysql> CREATE TABLE User(
- userId INT NOT NULL AUTO_INCREMENT,
- username VARCHAR(100) NOT NULL,
- password_hash VARCHAR(40) NOT NULL,
- remember_me 
- PRIMARY KEY(userId)
- );
-
-
-     id = db.Column(db.Integer,primary_key=True)
-    username = db.Column(db.String(64),index=True,unique=True)
-    password_hash = db.Column(db.String(128))
-    remember_me = db.Column(db.Boolean)
-```
-
-**Note** : When working with database servers such as MySQL and PostgreSQL, you have to create the database in the database server before running upgrade.
 
 ### Finally running the application 
 
@@ -64,12 +70,5 @@ flask run
 
 Go to localhost:5000 to access the application
 
-### Some data references 
-
-```
-data = [('2','consolidation'),
-        ('3','infiltrates'),
-        ('4','atelectasis')]
-
-        1 = pneumonia 
-```
+### Contributors 
+1. Judy Gichoya 
