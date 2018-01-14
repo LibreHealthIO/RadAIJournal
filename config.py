@@ -13,10 +13,10 @@ class Config(object):
     """
 
     #MYSQL COnfigs
-    SQLALCHEMY_DATABASE_URI = 'mysql://root:manmano@localhost/radAI'
+    SQLALCHEMY_DATABASE_URI = 'mysql://user:password@localhost/radAI'
 
     MYSQL_HOST = 'localhost'
-    MYSQL_USER = 'root'
-    MYSQL_PASSWORD = 'manmano'
+    MYSQL_USER = 'user'
+    MYSQL_PASSWORD = 'password'
     MYSQL_DB = 'radAI'
 

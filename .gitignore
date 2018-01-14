@@ -17,3 +17,6 @@ ENV/
 env.bak/
 venv.bak/
 myenv/
+
+#files
+config-bkp.py
