@@ -20,7 +20,7 @@ ncurses=6.0=hd04f020_2
 openssl=1.0.2n=hdbc3d79_0
 pil=1.1.7=py27_2
 pip=9.0.1=py27h1567d89_4
-python=2.7.14=hde5916a_29
+python=3.6.4
 readline=7.0=hc1231fa_4
 setuptools=36.5.0=py27h2a45cec_0
 sqlite=3.20.1=h7e4c145_2

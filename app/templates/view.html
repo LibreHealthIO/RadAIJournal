@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div>
+  <table class="table table-striped">
+					  <thead>
+						<tr>
+              <th>#</th>
+						  <th>Patient ID</th>
+						  <th>Study</th>
+						  <th>Age (yrs) </th>
+						  <th>Sex</th>
+						</tr>
+					  </thead>
+						<tbody>
+               {% for my_data in myworklist_data %}
+              <tr>
+                <td><a href="/study/{{my_data.img}}">
+										<button type="button" class="btn btn-primary btn-sm">Report</button>
+										</a></td>
+                <td>{{my_data.pt_id}}</td>
+                <td>CXR</td>
+                <td>{{my_data.age}}</td>
+                <td>{{my_data.sex}}</td>
+              </tr>
+              {% endfor %}  
+						</tbody>
+  </table>
+</div>
+
+{% endblock %}
