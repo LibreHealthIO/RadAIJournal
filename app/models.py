@@ -1,6 +1,6 @@
 from datetime import datetime
+from app import db, login 
 from flask_login import UserMixin
-from app import db,login 
 from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(UserMixin,db.Model):
@@ -24,10 +24,11 @@ def load_user(id):
 
 class Report(db.Model):
     id = db.Column(db.Integer,primary_key=True)
+    img_id = db.Column(db.String(320),index=True)
     pneumonia = db.Column(db.String(32),index=True)
-    consolidation = db.Column(db.Boolean)
-    infiltrates = db.Column(db.Boolean)
-    atelectasis = db.Column(db.Boolean)
+    consolidation = db.Column(db.String(32))
+    infiltrates = db.Column(db.String(32))
+    atelectasis = db.Column(db.String(32))
     comments = db.Column(db.Text)
     timestamp = db.Column(db.DateTime,index=True,default=datetime.utcnow)
     user_id = db.Column(db.Integer,db.ForeignKey('user.id'))

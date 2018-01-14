@@ -6,6 +6,23 @@
 		<main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
 
 			<div class="container-fluid">
+				<legend class="text-center">DEMOGRAPHICS</legend>
+
+				<div class="row">
+   					{% with messages = get_flashed_messages(with_categories=true) %}
+                    <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+                    {% if messages %}
+                        {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" style="color:red">&times;</span></button>
+                        <!-- <strong>Title</strong> --> {{ message }}
+                        </div>
+                        {% endfor %}
+                    {% endif %}
+                    {% endwith %}
+
+				</div>
+
 				<div class="row">
 					<div class="col-xs-12 text-center"> Patient ID: {{image_details.pt_id}} </div>
 				</div>
@@ -35,40 +52,44 @@
 				<!-- /.row -->
 
 				<div class="row">
-					<legend>Xray reporting template</legend>
-					<form>
+					<br>
+					<legend class="text-center">CHEST XRAY REPORTING TEMPLATE</legend>
+
+					<form action="" method="post">
 						<div class="form-check form-check-inline">
 							<legend>Is the CXR diagnostic of pneumonia</legend>
 						</div>
 						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="radio" name="inlineRadioOptions" id="pneumoniaRadio1" value="1">
+							<input class="form-check-input" type="radio" name="pneumonia" id="pneumoniaRadio1" value="1">
 							<label class="form-check-label" for="pneumoniaRadio1">Diagnostic of pneumonia</label>
 						</div>
 						<div class="form-check form-check-inline">
-							<input class="form-check-input" type="radio" name="inlineRadioOptions" id="pneumoniaRadio0" value="0">
+							<input class="form-check-input" type="radio" name="pneumonia" id="pneumoniaRadio0" value="0">
 							<label class="form-check-label" for="pneumoniaRadio0">Negative for pneumonia</label>
 						</div>
 
 						<br>
 						<legend>Other findings on the CXR</legend>
 						<div class="form-check">
-							<input type="checkbox" class="form-check-input" id="findingsCheck1" value="2">
+							<input type="checkbox" class="form-check-input" id="findingsCheck1" name="consolidation" value="1">
 							<label class="form-check-label" for="findingsCheck1">Consolidation</label>
 						</div>
 						<div> 
-							<input type="checkbox" class="form-check-input" id="findingsCheck2" value="3">
+							<input type="checkbox" class="form-check-input" id="findingsCheck2" name="infiltrates" value="1">
 							<label class="form-check-label" for="findingsCheck2">Infiltrates</label>
 						</div>
 						<div> 
-							<input type="checkbox" class="form-check-input" id="findingsCheck3" value="4">
-							<label class="form-check-label" for="findingsCheck2">Atelectasis</label>
+							<input type="checkbox" class="form-check-input" id="findingsCheck3" name="atelectasis" value="1">
+							<label class="form-check-label" for="findingsCheck3">Atelectasis</label>
 						</div>
 						<br>
 						<div class="form-group">
 							<label for="studyComments">Comments</label>
-							<input type="text" class="form-control" id="studyComments" placeholder="comments">
+							<input type="text" class="form-control" id="studyComments" placeholder="comments" name="comments">
 						</div>
-						<button type="submit" class="btn btn-primary">Save Report</button>
+						<div class="form-ground">
+						<a href="/study/{{img_id}}"> <button type="submit" class="btn btn-primary">Save Report</button> </a>
+						</div>
 					</form>
 				</div>
 				<!--/.row -->
