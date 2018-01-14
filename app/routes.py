@@ -16,9 +16,11 @@ from io import StringIO
 
 from app import app, db
 from app.forms import LoginForm, XrayForm
-from app.models import User , Report
+from app.models import User,Report
 
 mydata = pd.read_csv('app/static/FinalWorklist.csv')
+mydata['img_index'] = mydata['img']
+mydata.set_index('img_index',inplace=True)
 
 @app.route('/')
 @app.route('/index')
@@ -42,10 +44,22 @@ def index():
 def worklist():
     #search the DB for all studies read by the current user 
 
-    # Drop them from the dataframe before sampling them again to create the worklist 
-    
+    reports = Report.query.filter_by(user_id=current_user.id)
+    cxr_read = []
+
+    #are there any images returned 
+    if reports.count > 0:
+        for report in reports:
+            cxr_read.append(report.img_id)  
+        
+        # Drop them from the dataframe before sampling them again to create the worklist 
+        unread_cxr = mydata.drop(cxr_read)
+
+    else:
+        unread_cxr = mydata     
+
     #sample 20 studies from the list 
-    myworklist = mydata.sample(20)
+    myworklist = unread_cxr.sample(20)
 
     myworklist_data = []
     for index,row in myworklist.iterrows():
@@ -116,10 +130,20 @@ def study(img_id):
         else:
             comments = ''
         
+        #get the ground truth and prediction for the img 
+        img_data = mydata.loc[mydata['img'] == img_id]
+        if len(img_data) > 0:
+            #means there are metadata for that image 
+            for index,row in img_data.iterrows():
+                ground_truth = row.Pneumonia,
+                prediction = row.Pneumonia_pred
+                
         #save our cxr report
         try:
             report = Report(img_id = img_id, pneumonia = _pneumonia, consolidation=consolidation,
-            infiltrates=infiltrates, atelectasis=atelectasis, comments=comments, user_id=current_user.id)
+            infiltrates=infiltrates, atelectasis=atelectasis, comments=comments, user_id=current_user.id,
+            ground_truth = ground_truth, prediction = prediction)
+
             db.session.add(report)
             db.session.commit()
             flash("Report saved successfully!", 'success')
