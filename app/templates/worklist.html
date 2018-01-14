@@ -6,7 +6,7 @@
 	   <div class="row">
 
 		  <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
-		       <h1>Study List</h1>
+		       <legend> WorkList</legend>
 			   <div class="table-responsive">
 					<table class="table table-striped">
 					  <thead>
@@ -18,17 +18,19 @@
 						  <th>Sex</th>
 						</tr>
 					  </thead>
+
 						<tbody>
+         			{% for my_data in myworklist_data %}
               <tr>
-                <td><a href="/study/1">
+                <td><a href="/study/{{my_data.img}}">
 										<button type="button" class="btn btn-primary btn-sm">Report</button>
 										</a></td>
-                <td>1,001</td>
+                <td>{{my_data.pt_id}}</td>
                 <td>CXR</td>
-                <td>45</td>
-                <td>F</td>
+                <td>{{my_data.age}}</td>
+                <td>{{my_data.sex}}</td>
               </tr>
-  
+              {% endfor %}  
 						 </tbody>
 					</table>
 			  </div> <!-- /.table-responsive -->
