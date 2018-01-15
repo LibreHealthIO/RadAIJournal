@@ -3,13 +3,9 @@
 {%block content %}
 
  <div class="container-fluid">
-	   <div class="row">   
-		   
-		  <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
-			   <div class="table-responsive">
-                    <h1> Sign In</h1>
-
-
+		<main role="main" class="col-sm-12 ml-lg-auto col-md-12 pt-3">
+			   <div class="row">
+                    <h2 class="text-center"> Sign In</h2>
                     {% with messages = get_flashed_messages(with_categories=true) %}
                     <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
                     {% if messages %}
@@ -21,19 +17,22 @@
                         {% endfor %}
                     {% endif %}
                     {% endwith %}
+                </div>
 
-                    <form action="" method="post">
+                <div class="row">
+
+                    <form class="form form-horizontal" action="" method="post">
                         {{form.hidden_tag()}}
 
-                        <p>
-                            {{form.username.label}} <br>
-                            {{form.username(size=32)}}
+                        <p class="text-center">
+                            {{form.email.label}} <br>
+                            {{form.email(size=32)}}
 
-                            {% for error in form.username.errors %}
+                            {% for error in form.email.errors %}
                              <span style="color: red;">[{{ error }}]</span>
                              {% endfor %}
                         </p>
-                        <p>
+                        <p class="text-center">
                             {{form.password.label}} <br>
                             {{form.password(size=32)}}
 
@@ -41,14 +40,12 @@
                             <span style="color: red;">[{{ error }}]</span>
                             {% endfor %}
                         </p>
-                        <p>{{form.remember_me()}} {{ form.remember_me.label }} </p>
-                        <p>{{form.submit()}} </p>
+                        <p class="text-center">{{form.remember_me()}} {{ form.remember_me.label }} </p>
+                        <p class="text-center">{{form.submit()}} </p>
                     </form>
-                        <p>New User? <a href="{{ url_for('register') }}">Click to Register!</a></p>
-			  </div> <!-- /.table-responsive -->
-
+                        <p class="text-center">New User? <a href="{{ url_for('register') }}">Click to Register!</a></p>
+			  </div> <!-- /.row -->
 		  </main>
-	  </div> <!-- /.row -->
   </div> <!-- /.container-fluid -->
 
 
