@@ -3,42 +3,41 @@
 {% block content %}
 
   <div class="container-fluid">
+		<main role="main" class="col-sm-12 ml-lg-auto col-md-12 pt-3">
+				<div class="row">
+								{% with messages = get_flashed_messages(with_categories=true) %}
+												<!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+												{% if messages %}
+														{% for category, message in messages %}
+														<div class="alert alert-{{ category }} alert-dismissible" role="alert">
+														<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" style="color:red">&times;</span></button>
+														<!-- <strong>Title</strong> --> {{ message }}
+														</div>
+														{% endfor %}
+												{% endif %}
+												{% endwith %}
 
-			<div class="row">
-   					{% with messages = get_flashed_messages(with_categories=true) %}
-                    <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
-                    {% if messages %}
-                        {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" style="color:red">&times;</span></button>
-                        <!-- <strong>Title</strong> --> {{ message }}
-                        </div>
-                        {% endfor %}
-                    {% endif %}
-                    {% endwith %}
+						</div>
 
-				</div>
-				
-	   <div class="row">
+						 <div class="row">
 
-		  <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
-		       <legend> WorkList</legend>
-			   <div class="table-responsive">
-					<table class="table table-striped">
-					  <thead>
-						<tr>
-              <th>#</th>
-						  <th>Patient ID</th>
-						  <th>Study</th>
-						  <th>Age (yrs) </th>
-						  <th>Sex</th>
-						</tr>
-					  </thead>
+		    <h3 class="text-center"> <span style="color: purple;">Select a study to interpret </span></h3>
+					   <div class="table-responsive">
+							<table class="table table-striped">
+								<thead class="thead-inverse">  
+									<tr>
+										<th class="text-center">#</th>
+										<th>Patient ID</th>
+										<th>Study</th>
+										<th>Age (yrs) </th>
+										<th>Sex</th>
+									</tr>
+								</thead>
 
-						<tbody>
+												<tbody>
          			{% for my_data in myworklist_data %}
               <tr>
-                <td><a href="/study/{{my_data.img}}">
+                <td class="text-center"><a href="/study/{{my_data.img}}">
 										<button type="button" class="btn btn-primary btn-sm">Report</button>
 										</a></td>
                 <td>{{my_data.pt_id}}</td>
@@ -49,9 +48,11 @@
               {% endfor %}  
 						 </tbody>
 					</table>
-			  </div> <!-- /.table-responsive -->
-		  </main>
-	  </div> <!-- /.row -->
-  </div> <!-- /.container-fluid -->
+					   </div>
 
+		</main> 
+		<!--.main -->
+
+  </div>
+	<!--.container-fluid-->
 {% endblock %}

@@ -33,7 +33,7 @@ $ pip install -r requirements.txt
 The application relies on a  mysql backend 
 **Note** : When working with database servers such as MySQL and PostgreSQL, you have to create the database in the database server before running upgrade.
 
-In this case our database name is radAI
+In this case our database name is **radAI**
 ```
 $ mysql -u  -p
 $ mysql> CREATE DATABASE radAI;
@@ -57,7 +57,7 @@ Assumes that you have
 3. Updated the config.py file 
 
 ```
-$ FLASK_APP=radaijournal.py
+$ export FLASK_APP=radaijournal.py
 $ flask run
 ```
 

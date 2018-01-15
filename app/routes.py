@@ -15,7 +15,7 @@ from PIL import Image
 from io import StringIO
 
 from app import app, db
-from app.forms import LoginForm, XrayForm
+from app.forms import LoginForm, XrayForm, RegisterForm
 from app.models import User,Report
 
 mydata = pd.read_csv('app/static/FinalWorklist.csv')
@@ -25,19 +25,7 @@ mydata.set_index('img_index',inplace=True)
 @app.route('/')
 @app.route('/index')
 def index():
-    user = {'username':'gichoya'}
-    posts = [
-        {
-            'author' : {'username':'John'},
-            'body':'Beautiful day in Portland!'
-        },
-        {
-            'author' : {'username':'Susan'},
-            'body':'The Avengers movie was so cool!'
-        }
-    ]
-
-    return render_template('index.html', title= 'Nyumbani',user = user,posts=posts)
+    return render_template('index.html', title= 'Nyumbani')
 
 @app.route('/worklist')
 @login_required
@@ -159,7 +147,7 @@ def login():
         return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
+        user = User.query.filter_by(email=form.email.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password',category='danger')
             return redirect(url_for('login'))
@@ -176,9 +164,141 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route("/register")
+@app.route("/register",methods=['GET','POST'])
 def register():
-    return(url_for('index'))
+    form = RegisterForm(request.form)
+
+    if request.method == 'GET':
+        return render_template('register.html',form = form)
+
+    elif request.method == 'POST':
+
+        user_email = request.form.get('email')
+        #check that length of email is not null
+        if len(user_email) == 0:
+            #means no email was entered 
+            flash("Invalid email entered",category='danger')
+            return redirect(url_for('register'))
+
+        #search the database and ensure that there is no duplicate email 
+        user = User.query.filter_by(email=user_email)
+        ## TODO - verify the email
+        """
+        if user is not None:
+            #duplicate email exists in the database 
+            flash("Email exists in the database!",category='danger')
+            return redirect(url_for('register'))
+        """
+        
+        #Check both password fields match 
+        password = request.form.get('password')
+        if len(password) == 0:
+            #means no password entered 
+            flash("Invalid password entered",category='danger')
+            return redirect(url_for('register'))
+        elif (len(password) < 8  ):
+            # password length is less than 8 chars 
+            flash("Password must be 8 characters or more",category='danger')
+            return redirect(url_for('register'))
+        else:
+            # check that this matches with password field 2 
+            password2 = request.form.get('password2')
+            if password != password2:
+                flash("Passwords do not match!",category='danger')
+                return redirect(url_for('register'))
+        
+        #prepare object to save 
+        try:
+            new_user = User(email=user_email)
+            new_user.set_password(password)
+            db.session.add(new_user)
+            db.session.commit()
+            flash("User Account created successfully!", 'success')
+            return render_template('redirect.html')
+        except:
+            flash("User Account  NOT created successfully","danger")
+            return redirect(url_for('register'))
+
+    return render_template('register.html',form = form)
+
+@app.route("/register2", methods=['GET', 'POST'])
+def register2():
+    form = RegisterForm(request.form)
+    if request.method == 'GET':
+        return render_template('register.html',form = form)
+    elif request.method == 'POST':
+        print(form.data)
+
+        if request.form.get('email'):
+            user_email = request.form.get('email')
+
+            #search the database and ensure that there is no duplicate email 
+            emails = User.query.filter_by(email=user_email)
+            if emails.count == 0:
+                #means the user email is unique 
+                pass
+            elif emails.count > 0 :
+                #duplicate email exists in the database 
+                flash("Email exists in the database!",category='danger')
+                return redirect(url_for('register'))
+        
+        
+        # Get first name
+        if request.form.get('first_name'):
+            user_first_name = request.form.get('first_name')
+        else:
+            user_first_name = ''
+
+        # Get middle name
+        if request.form.get('middle_name'):
+            user_middle_name = request.form.get('middle_name')
+        else:
+            user_middle_name = ''
+
+        # Get last name 
+        if request.form.get('last_name'):
+            user_last_name = request.form.get('last_name')
+        else:
+            user_last_name = ''
+
+        #Get NPI 
+        if request.form.get('npi'):
+            user_npi = request.form.get('npi')
+
+            # search for NPIs in the database 
+            npis = User.query.filter_by(npi=user_npi)
+            if npis.count == 0:
+                #means unique NPI 
+                pass
+            else:
+                flash("NPI exists in the database!",category='danger')
+                return redirect(url_for('register'))
+
+        #Get doctor quals 
+        doctor = request.form.get('doctor')
+
+        # Get radiologist 
+        radiologist = request.form.get('radiologist')
+
+        # Get training 
+        training = request.form.get('training')
+
+        # Get years of clinical practice 
+        practice = request.form.get('clinical_practice')
+
+        # Get institution type 
+        institution = request.form.get('institution_type')
+
+        # Get clinical_speciality
+        specialty = request.form.get('clinical_specialty')
+
+        # country 
+        country = request.form.get('country')
+
+        #state 
+        state = request.form.get('')
+        
+        return render_template('register.html',form = form)
 
 @app.errorhandler(404)
 def page_not_found(e):

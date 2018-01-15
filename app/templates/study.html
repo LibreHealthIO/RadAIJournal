@@ -1,29 +1,29 @@
 {% extends "base.html" %} {% block content %}
 
 <div class="container-fluid">
-	<div class="row">
+	<main role="main" class="col-sm-12 ml-lg-auto col-md-12 pt-3">
+		<div class="row">
+		    <h4 class="text-center"> <span style="color: purple;">DEMOGRAPHICS </span></h4>
+		</div>
+		<!-- /.row -->
 
-		<main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
+			<div class="row">
+								{% with messages = get_flashed_messages(with_categories=true) %}
+												<!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+												{% if messages %}
+														{% for category, message in messages %}
+														<div class="alert alert-{{ category }} alert-dismissible" role="alert">
+														<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" style="color:red">&times;</span></button>
+														<!-- <strong>Title</strong> --> {{ message }}
+														</div>
+														{% endfor %}
+												{% endif %}
+												{% endwith %}
 
-			<div class="container-fluid">
-				<legend class="text-center">DEMOGRAPHICS</legend>
+						</div>
+						<!-- /.row -->	
 
-				<div class="row">
-   					{% with messages = get_flashed_messages(with_categories=true) %}
-                    <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
-                    {% if messages %}
-                        {% for category, message in messages %}
-                        <div class="alert alert-{{ category }} alert-dismissible" role="alert">
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" style="color:red">&times;</span></button>
-                        <!-- <strong>Title</strong> --> {{ message }}
-                        </div>
-                        {% endfor %}
-                    {% endif %}
-                    {% endwith %}
-
-				</div>
-
-				<div class="row">
+			<div class="row">
 					<div class="col-xs-12 text-center"> Patient ID: {{image_details.pt_id}} </div>
 				</div>
 				<!--/.row -->
@@ -38,8 +38,7 @@
 				</div>
 				<!--/.row -->
 
-
-				<div class="row">
+					<div class="row">
 					<p>
 						<p>
 							<p>
@@ -53,8 +52,8 @@
 
 				<div class="row">
 					<br>
-					<legend class="text-center">CHEST XRAY REPORTING TEMPLATE</legend>
-
+					<h3 class="text-center"><span style="color: purple;">CHEST XRAY REPORTING TEMPLATE</span></h3>
+					<br>
 					<form action="" method="post">
 						<div class="form-check form-check-inline">
 							<legend>Is the CXR diagnostic of pneumonia</legend>
@@ -89,20 +88,16 @@
 						</div>
 						<div class="form-ground">
 						<a href="/study/{{img_id}}"> <button type="submit" class="btn btn-primary">Save Report</button> </a>
+						<a href="{{ url_for('worklist')}}"> <button type="button" class="btn btn-warning">Cancel</button> </a>
 						</div>
+						<br>
+						<br>
 					</form>
 				</div>
 				<!--/.row -->
-
-			</div>
-			<!--/.container -->
-
-		</main>
-		<!--/.main -->
-	</div>
-	<!-- /.row -->
+	</main>
+	<!-- /.main -->
 </div>
 <!-- /.container-fluid -->
-
 
 {% endblock %}

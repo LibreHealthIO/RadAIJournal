@@ -2,21 +2,18 @@
 
 {% block content %}
 
- <div class="container-fluid">
+<div class="container-fluid">
+	 <main role="main" class="col-sm-12 ml-lg-auto col-md-12 pt-3">
 	   <div class="row">   
-		   
-		  <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
-			   <div class="table-responsive">
-				   <legend class="text-center"> Radiologist versus Machine </legend>
-                    <h1>Habari, {{ user.username }}!</h1>
-                        {% for post in posts %}
-                        <div><p>{{ post.author.username }} says: <b>{{ post.body }}</b></p></div>
-                        {% endfor %}
-			  </div> <!-- /.table-responsive -->
+				   <h2 class="text-center"> 
+						 <span style="color: purple;">
+						 Radiologist versus Machine </span></h2>
 
-		  </main>
+					 <div class="container-fluid">
+				<img src="/static/logos/logo.png" class="img-fluid" alt="Responsive image">
+					 </div>
 	  </div> <!-- /.row -->
+	 </main>
   </div> <!-- /.container-fluid -->
-
 
 {% endblock %}
