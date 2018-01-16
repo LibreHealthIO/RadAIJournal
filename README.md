@@ -21,7 +21,6 @@ $ pip install virtualenv
 $ virtualenv ENV
 $ source bin/activate  (for Linux or Mac OS ) - Else for Windows - 
 $ > \path\to\env\Scripts\activate
-
 ```
 
 Get the source code 
