@@ -1,0 +1,44 @@
+{% extends "base.html" %} {%block content %}
+
+<div class="container-fluid">
+    <main role="main" class="col-sm-12 ml-lg-auto col-md-12 pt-3">
+        <div class="row">
+            <h2 class="text-center"> User registration</h2>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            <!-- Categories: success (green), info (blue), warning (yellow), danger (red) -->
+            {% if messages %} {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true" style="color:red">&times;</span></button>
+                <!-- <strong>Title</strong> -->{{ message }}
+            </div>
+            {% endfor %} {% endif %} {% endwith %}
+        </div>
+
+        <form method="POST" action="">
+            <div class="form-group">
+                <label for="exampleInputEmail1">Email address</label>
+                <input type="email" name="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="example@gmail.com">
+                <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <input type="password" name="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputPassword2">Password</label>
+                <input type="password" name="password2" class="form-control" id="exampleInputPassword2" placeholder="Renter Password">
+            </div>
+
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <a href="{{ url_for('login')}}"> <button type="button" class="btn btn-warning">Cancel</button> </a> 
+
+        </form>
+
+    </main>
+
+</div>
+<!--.container-fluid-->
+
+{% endblock %}
