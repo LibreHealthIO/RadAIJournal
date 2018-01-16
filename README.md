@@ -2,6 +2,7 @@
 1. Python 
 2. Virtualenv 
 3. Mysql 
+4. Messaging service - stmp server
 
 
 ### Installation - Configuration 
@@ -17,10 +18,19 @@ Edit the file to update your mysql username and password
 2. Set up your virtual environment in the project folder
 ```
 $ pip install virtualenv
+$ virtualenv ENV
+$ source bin/activate  (for Linux or Mac OS ) - Else for Windows - 
+$ > \path\to\env\Scripts\activate
+
+```
+
+Get the source code 
+```
 $ git clone https://gitlab.com/librehealth/RadAIJournal.git
 $ cd RadAIJournal
-$ virtualenv venv
-$ source my_project/bin/activate
+$ virtualenv venv  
+$ source my_project/bin/activate  # For linux
+$ venv\Scripts\activate.bat # for Windows 
 ```
 
 3. Install the python modules using the requirements file
@@ -48,17 +58,32 @@ $ flask db migrate  #generates the migration script
 $ flask db upgrade  #Applies the changes to the database 
 ```
 
+### Email setup 
+Edit the following files in the config.py
+```
+MAIL_SERVER = 'smtp.elasticemail.com'
+MAIL_PORT= 2525
+MAIL_USERNAME = 'myusername'
+MAIL_PASSWORD = 'myassword'
+MAIL_USE_TLS = False
+```
 
 ### Finally running the application 
 
 Assumes that you have 
 1. Database migrations done 
 2. The environment with all the pip modules installed 
-3. Updated the config.py file 
+3. Updated the config.py file with email setup/instructions
 
+#### Linux / Mac
 ```
 $ export FLASK_APP=radaijournal.py
 $ flask run
+```
+
+#### Windows 
+```
+SET FLASK_APP=radaijournal.py
 ```
 
 Go to <a href="http://localhost:5000"> http://localhost:5000 </a>to access the application

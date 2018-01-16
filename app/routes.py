@@ -8,6 +8,7 @@ from flask_bootstrap import __version__ as FLASK_BOOTSRAP_VERSION
 from flask_nav.elements import Navbar, View, Subgroup, Link, Text, Separator
 from flask_login import login_user, logout_user, current_user, login_required 
 from werkzeug.urls import url_parse
+from flask_mail import Mail, Message
 
 from markupsafe import escape
 
@@ -16,11 +17,30 @@ from io import StringIO
 
 from app import app, db
 from app.forms import LoginForm, XrayForm, RegisterForm
-from app.models import User,Report
+from app.models import User, Report
 
 mydata = pd.read_csv('app/static/FinalWorklist.csv')
 mydata['img_index'] = mydata['img']
 mydata.set_index('img_index',inplace=True)
+
+#mail classes
+def generate_confirmation_token(email):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
+
+
+def confirm_token(token, expiration=600):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(
+            token,
+            salt=app.config['SECURITY_PASSWORD_SALT'],
+            max_age=expiration
+        )
+    except:
+        return False
+    return email
+
 
 @app.route('/')
 @app.route('/index')
@@ -164,8 +184,22 @@ def logout():
     logout_user()
     return redirect(url_for('index'))
 
-@app.route("/register",methods=['GET','POST'])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = RegisterForm()
+    if form.validate_on_submit():
+        user = User(email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Congratulations, you are now a registered user!')
+        return redirect(url_for('login'))
+    return render_template('register.html', title='Register', form=form)
+
+@app.route("/register3",methods=['GET','POST'])
+def register3():
     form = RegisterForm(request.form)
 
     if request.method == 'GET':
@@ -213,10 +247,20 @@ def register():
             new_user.set_password(password)
             db.session.add(new_user)
             db.session.commit()
-            flash("User Account created successfully!", 'success')
+            
+            #Activate user email now 
+            token = generate_confirmation_token(user_email)
+            msg = Message('WELCOME TO RAD vs MACHINE', sender = 'judy@joleh.com', recipients = [user_email])
+            msg.body = "Thank you for registering in the RAD vs MACHINE competition"
+            confirm_url = url_for('confirm_email',token=token,_external=True)
+            #msg.html = render_template('activate.html',confirm_url=confirm_url)
+            
+            mail.send(msg)
+
+            flash("User Account created successfully! Check email for activation instructions", 'success')
             return render_template('redirect.html')
         except:
-            flash("User Account  NOT created successfully","danger")
+            flash("User Account NOT created successfully","danger")
             return redirect(url_for('register'))
 
     return render_template('register.html',form = form)
