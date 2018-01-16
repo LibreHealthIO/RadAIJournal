@@ -83,42 +83,6 @@ def worklist():
 
     return render_template('worklist.html',myworklist_data=myworklist_data)
 
-@app.route('/worklist2')
-@login_required
-def worklist2():
-    #search the DB for all studies read by the current user 
-
-    reports = Report.query.filter_by(user_id=current_user.id)
-    cxr_read = []
-
-    #are there any images returned 
-    if reports.count > 0:
-        for report in reports:
-            cxr_read.append(report.img_id)  
-        
-        # Drop them from the dataframe before sampling them again to create the worklist 
-        unread_cxr = mydata.drop(cxr_read)
-
-    else:
-        unread_cxr = mydata     
-
-    #sample 20 studies from the list 
-    myworklist = unread_cxr.sample(20)
-
-    myworklist_data = []
-    for index,row in myworklist.iterrows():
-        mydict = {
-            "img":row.img,
-            "pt_id":row.pt_id,
-            "study": "CXR",
-            "age":row.age,
-            "sex":row.sex
-        }
-
-        myworklist_data.append(mydict)
-
-    return render_template('worklist.html',myworklist_data=myworklist_data)
-
 @app.route('/stats')
 @login_required
 def stats():
@@ -228,6 +192,8 @@ def register():
     if form.validate_on_submit():
         user = User(email=form.email.data)
         user.set_password(form.password.data)
+
+        #save user
         db.session.add(user)
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
