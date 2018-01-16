@@ -51,6 +51,42 @@ def index():
 @login_required
 def worklist():
     #search the DB for all studies read by the current user 
+    reports = Report.query.filter_by(user_id=current_user.id)
+    reports_count = reports.count()
+    cxr_read = []
+
+    #are there any images returned 
+    if reports_count > 0:
+        for report in reports:
+            cxr_read.append(report.img_id)  
+        
+        # Drop them from the dataframe before sampling them again to create the worklist 
+        unread_cxr = mydata.drop(cxr_read)
+
+    else:
+        unread_cxr = mydata     
+
+    #sample 20 studies from the list 
+    myworklist = unread_cxr.sample(20)
+
+    myworklist_data = []
+    for index,row in myworklist.iterrows():
+        mydict = {
+            "img":row.img,
+            "pt_id":row.pt_id,
+            "study": "CXR",
+            "age":row.age,
+            "sex":row.sex
+        }
+
+        myworklist_data.append(mydict)
+
+    return render_template('worklist.html',myworklist_data=myworklist_data)
+
+@app.route('/worklist2')
+@login_required
+def worklist2():
+    #search the DB for all studies read by the current user 
 
     reports = Report.query.filter_by(user_id=current_user.id)
     cxr_read = []
@@ -197,73 +233,6 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
-
-@app.route("/register3",methods=['GET','POST'])
-def register3():
-    form = RegisterForm(request.form)
-
-    if request.method == 'GET':
-        return render_template('register.html',form = form)
-
-    elif request.method == 'POST':
-
-        user_email = request.form.get('email')
-        #check that length of email is not null
-        if len(user_email) == 0:
-            #means no email was entered 
-            flash("Invalid email entered",category='danger')
-            return redirect(url_for('register'))
-
-        #search the database and ensure that there is no duplicate email 
-        user = User.query.filter_by(email=user_email)
-        ## TODO - verify the email
-        """
-        if user is not None:
-            #duplicate email exists in the database 
-            flash("Email exists in the database!",category='danger')
-            return redirect(url_for('register'))
-        """
-        
-        #Check both password fields match 
-        password = request.form.get('password')
-        if len(password) == 0:
-            #means no password entered 
-            flash("Invalid password entered",category='danger')
-            return redirect(url_for('register'))
-        elif (len(password) < 8  ):
-            # password length is less than 8 chars 
-            flash("Password must be 8 characters or more",category='danger')
-            return redirect(url_for('register'))
-        else:
-            # check that this matches with password field 2 
-            password2 = request.form.get('password2')
-            if password != password2:
-                flash("Passwords do not match!",category='danger')
-                return redirect(url_for('register'))
-        
-        #prepare object to save 
-        try:
-            new_user = User(email=user_email)
-            new_user.set_password(password)
-            db.session.add(new_user)
-            db.session.commit()
-            
-            #Activate user email now 
-            token = generate_confirmation_token(user_email)
-            msg = Message('WELCOME TO RAD vs MACHINE', sender = 'judy@joleh.com', recipients = [user_email])
-            msg.body = "Thank you for registering in the RAD vs MACHINE competition"
-            confirm_url = url_for('confirm_email',token=token,_external=True)
-            #msg.html = render_template('activate.html',confirm_url=confirm_url)
-            
-            mail.send(msg)
-
-            flash("User Account created successfully! Check email for activation instructions", 'success')
-            return render_template('redirect.html')
-        except:
-            flash("User Account NOT created successfully","danger")
-            return redirect(url_for('register'))
-
-    return render_template('register.html',form = form)
 
 @app.route("/register2", methods=['GET', 'POST'])
 def register2():

@@ -34,7 +34,7 @@
             <li><a href="/stats">Stats</a></li>
           </ul>
           <ul class="nav navbar-default navbar-right">
-            <li>Logged in as {{current_user.username}} <a href="{{ url_for('logout') }}"> Logout</a> </li>
+            <li>{{current_user.email}} <a href="{{ url_for('logout') }}" class="text-center"> Logout</a> </li>
           </ul>
         </nav> 
         <!--.navbar navbar-default-->
