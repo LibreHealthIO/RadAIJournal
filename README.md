@@ -10,9 +10,6 @@
 The application config files reside in  ```config.py```.  In your directory you have a file named ```config-bkp.py```
 Edit the file to update your mysql username and password and the mailing stmp server (I use elasticemail.com) then rename the file as  ```config.py```
 
-In the routes.py - Add the following change in the import section 
-```engine = create_engine('mysql+pymysql://username:password@localhost:3306/radAI')``
-
 
 ### Installation - Steps
 
