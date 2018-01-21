@@ -7,8 +7,12 @@
 
 ### Installation - Configuration 
 
-The application config files reside in  ```config.py```
-Edit the file to update your mysql username and password
+The application config files reside in  ```config.py```.  In your directory you have a file named ```config-bkp.py```
+Edit the file to update your mysql username and password and the mailing stmp server (I use elasticemail.com) then rename the file as  ```config.py```
+
+In the routes.py - Add the following change in the import section 
+```engine = create_engine('mysql+pymysql://username:password@localhost:3306/radAI')``
+
 
 ### Installation - Steps
 
@@ -51,7 +55,7 @@ $ mysql> CREATE DATABASE radAI;
 To set this up on a new installation , delete the **migrations** folder  then run the following commands
 
 ```
-$ FLASK_APP=radaijournal.py
+$ export FLASK_APP=radaijournal.py 
 $ flask db init
 $ flask db migrate  #generates the migration script 
 $ flask db upgrade  #Applies the changes to the database 
@@ -63,7 +67,7 @@ Edit the following files in the config.py
 MAIL_SERVER = 'smtp.elasticemail.com'
 MAIL_PORT= 2525
 MAIL_USERNAME = 'myusername'
-MAIL_PASSWORD = 'myassword'
+MAIL_PASSWORD = 'mypassword'
 MAIL_USE_TLS = False
 ```
 
@@ -89,3 +93,9 @@ Go to <a href="http://localhost:5000"> http://localhost:5000 </a>to access the a
 
 ### Contributors 
 1. Judy Gichoya 
+2. Avanigadda, Prem Chand 
+3. Siddhartha Nuthakki 
+4. Aaron Elson P - GCI student from 2017 who made the logo
+5. Saptarshi Purkayastha
+6. Priyanshu Sinha
+7. Robby O'Connor - our dev ops master 

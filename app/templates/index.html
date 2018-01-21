@@ -1,19 +1,24 @@
-{% extends "base.html" %}
-
-{% block content %}
+{% extends "base.html" %} {% block content %}
 
 <div class="container-fluid">
-	 <main role="main" class="col-sm-12 ml-lg-auto col-md-12 pt-3">
-	   <div class="row">   
-				   <h2 class="text-center"> 
-						 <span style="color: purple;">
-						 Radiologist versus Machine </span></h2>
+	<main role="main" class="col-sm-12 ml-lg-auto col-md-12 pt-3">
+		<div class="row">
+			<h2 class="text-center">
+				<span style="color: purple;">
+						 Human versus Machine </span></h2>
 
-					 <div class="container-fluid">
-				<img src="/static/logos/logo.png" class="img-fluid" alt="Responsive image">
-					 </div>
-	  </div> <!-- /.row -->
-	 </main>
-  </div> <!-- /.container-fluid -->
+			<div class="row text-center">
+				<img src="/static/logos/radai.gif" class="img-fluid" alt="Responsive image">
+			</div>
+		</div>
+		<!-- /.row -->
+		{% if current_user.is_anonymous %}
+		<p class="text-center"><a href="{{ url_for('login') }}">Login to get started</a> </p>
+		{% else %}
+		<p class="text-center"><a href="{{ url_for('worklist') }}">Select a study to read</a> </p>
+		{% endif %}
+	</main>
+</div>
+<!-- /.container-fluid -->
 
 {% endblock %}

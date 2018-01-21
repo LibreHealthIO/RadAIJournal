@@ -1,45 +1,138 @@
-{% extends "base.html" %}
-
-{% block content %}
-
- <div class="container-fluid">
-	   <div class="row">   
-		   
-		  <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
-			   <div class="table-responsive">
-                    <legend class="text-center"> Leaderboard </legend>
-					
-					<div class="table-responsive">
-					<table class="table table-striped">
-					  <thead class="thead-inverse">  
-						<tr>
-              			  <th>#</th>
-						  <th>User</th>
-						  <th>Score</th>
-						  <th>Accuracy</th>
-						  <th>Machine</th>
-						</tr>
-					  </thead>
-					</table>
-
-			  </div> <!-- /.table-responsive -->
-		  </main>
-	  </div> <!-- /.row -->
-  </div> <!-- /.container-fluid -->
-
-<br>
-<br>
-  <hr>
-  <br>
-  <br>
+{% extends "base.html" %} {% block content %}
 
 <div class="container-fluid">
+  <main role="main" class="col-sm-12 ml-lg-auto col-md-12 pt-3">
+    <div class="row">
+      <h2 class="text-center"><span style="color: purple;"> Leaderboard </span></h2>
+    </div>
+    <br>
+    <div class="table-responsive">
+      <table class="table table-striped table-inverse table-bordered table-sm">
+        <thead class="thead-inverse">
+          <tr class="text-center">
+            <th class="text-center">#</th>
+            <th class="text-center">User ID</th>
+            <th class="text-center">Total score</th>
+            <th class="text-center">User accuracy (%)</th>
+            <th class="text-center">Machine accuracy (%)</th>
+          </tr>
 
-			  <div class="row">
-				  <main role="main" class="col-sm-9 ml-sm-auto col-md-10 pt-3">
- 				<legend class="text-center"> Your score </legend>
-				  </main>
-			  </div>
+        </thead>
+        {% for index, row in leader_board.iterrows(): %}
+        <tr class="table-active text-center">
+          <td>{{index+1}}</td>
+          <td>{{row['user']}}</td>
+          <td>{{row['total']}}</td>
+          <td>{{row['human_accuracy']}}</td>
+          <td>{{row['machine_accuracy']}}</td>
+        </tr>
+        {%endfor%}
+      </table>
+    </div>
+    <!-- /.table-responsive -->
+  </main>
+</div>
+<!-- /.container-fluid -->
+
+<br>
+<br>
+<hr>
+<br>
+<br>
+
+<div class="container-fluid">
+  <main role="main" class="col-sm-12 ml-lg-auto col-md-12 pt-3">
+    <div class="row">
+      <h2 class="text-center"><span style="color:darkred"> Your score  </span></h2>
+    </div>
+    <br>
+    <div class="row">
+      <table class="table table-striped table-inverse table-bordered">
+        <tr>
+          <th class="text-center">User ID</th>
+          <th class="text-center">Total Score</th>
+          <th class="text-center">Your Accuracy (%)</th>
+          <th class="text-center">Machine accuracy (%)</th>
+        </tr>
+        <tr>
+          <td class="text-center">{{data.0}}</td>
+          <td class="text-center">{{data.1}}</td>
+          <td class="text-center">{{data.2}}</td>
+          <td class="text-center">{{data.3}}</td>
+        </tr>
+      </table>
+    </div>
+  </main>
 </div>
 
-{% endblock %}
+
+<div class="container-fluid">
+  <main role="main" class="col-sm-12 ml-lg-auto col-md-12 pt-3">
+    <div class="row">
+      <h3 class="text-center"> Understanding your score </h3>
+     <p> We assume that the ground truth is the truth. You can read more on how the dataset was prepared here :
+     </p>
+
+     <p> For the human or machine , you are scored against the performance of the machine based on the ground truth. A zero score is awarded when both machine and humans are correct or wrong. 
+       When humans miss a diagnosis but the machine is correct, then they get a score of -1 . When the humans get the diagnosis , but the machine is wrong then you get a score of +1. 
+       
+       <br><br>
+       See examples below to explain this concept 
+    </p>
+
+    </div>
+
+    <div class="row">
+     <table class="table table-responsive table-bordered">
+       <thead>
+          <tr>
+            <th> Ground Truth </th>
+            <th>Human Correct</th>
+            <th> Machine Correct </th>
+            <th> Comment </th>
+            <th>Score Awarded</th>
+          </tr>
+      </thead>
+      <tbody>
+         <tr>
+          <td> 1 (Pneumonia present) </td>
+          <td> 1 (Pneumonia present) </td>
+          <td> 1 (Pneumonia present) </td>
+          <td> Both human and machine correctly identify pneumonia </td>
+          <td> 0 </td>
+          </tr>
+        <tr>
+          <td> 0 (Pneumonia absent) </td>
+          <td> 0 (Pneumonia absent) </td>
+          <td> 0 (Pneumonia absent) </td>
+          <td> Both human and machine correctly identify that the study is Negative for pneumonia  </td>
+          <td> 0 </td>
+          </tr>    
+
+          <tr>
+          <td> 1 (Pneumonia present) </td>
+          <td> 0 <em>(Pneumonia Absent) </em> </td>
+          <td> 1 (Pneumonia present) </td>
+          <td> Human misses pneumonia diagnosis while machine correctly identifies pneumonia </td>
+          <td> -1 </td>
+          </tr>
+
+          <tr>
+          <td> 1 (Pneumonia present) </td>
+          <td> 1 (Pneumonia present) </td>
+          <td> 0 <em>(Pneumonia Absent) </em> </td>
+          <td> Human gets the pneumonia diagnosis correct , but the machine misses the diagnosis  </td>
+          <td> +1 </td>
+          </tr>
+
+      </tbody>
+
+     </table>
+
+    </div>
+  </main>
+</div>
+
+<br>
+<br>
+    {% endblock %}

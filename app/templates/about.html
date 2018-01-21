@@ -1,0 +1,134 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="container-fluid">
+	<main role="main" class="col-sm-12 ml-lg-auto col-md-12 pt-3">
+		<div class="row">
+			<h4 class="text-center">
+				<span style="color: purple;">
+						 Human versus Machine </span></h4>
+		</div>
+		<!-- /.row -->
+
+
+		<h4>Our inspiration </h4>
+		<p> This application came up as a supplement to our upcoming 2nd radiology residents Artificial Intelligence
+			<a href="https://t.co/BpJ8QN7dpX"> Journal club </a> where we will be discussing the <a href="https://arxiv.org/abs/1711.05225"> ChexNet Paper </a>			by the Stanford group that was reported by multiple media outlets that algorithms beat radiologists at diagnosing pneumonia.
+		</p>
+
+		1. <a href="https://news.stanford.edu/2017/11/15/algorithm-outperforms-radiologists-diagnosing-pneumonia/"> Stanford algorithm can diagnose pneumonia better than radiologists  </a>
+		<br> 2. <a href="https://www.technologyreview.com/the-download/609510/a-new-algorithm-can-spot-pneumonia-better-than-a-radiologist/"> A New Algorithm Can Spot Pneumonia Better Than a Radiologist </a>
+
+		<br>
+		<br>
+		<p>We attempt to provide a taste of how machines are performing currently across a heterogeneous group of radiologists and
+			othermedical providers who vary across geography and in training.</p>
+
+		<br>
+		<h4>The machine </h4>
+		Since we could not get the results data used by the Stanford group , we adopted this implementation of the ChexNet algorithm
+		shared by the Machine Intelligence Lab, Institute of Computer Science & Technology, Peking University, directed by Prof.
+		Yadong Mu <a href="http://www.muyadong.com">(http://www.muyadong.com)</a>.
+		<br><br>
+		<p> Their implementation is available under open source license <a href="https://github.com/arnoweng/CheXNet"> here </a>
+			<br><br> Here is a snapshot of their results
+
+			<img src="/static/images/chexnet.png" class="img-responsive">
+
+			<div class="text-center"><small class="text-center"> PS: We have invited this group to our journal club discussion but their participation is not confirmed </small></div>
+
+			<h4>The data </h4>
+			<p>
+				We worked with the <a href="https://arxiv.org/abs/1705.02315"> ChestX-ray14 dataset </a> provided by National Institutes
+				of Health - Clinical Center and described by Wang et al. This dataset contains 112,120 frontal-view chest X-ray labelled
+				with 14 chest diseases incuding pneumonia. The complete dataset can be downloaded on <a href="https://nihcc.app.box.com/v/ChestXray-NIHCC"> box </a>.
+				Of note is that labeling datasets was performed using automatic extraction features from reports.
+
+			</p>
+
+			To our knowledge , this is the first attempt to assess a different approach this dataset annonation where you will review
+			chext rays contained in the testing dataset and decide is this pneumonia or negative for pneumonia
+
+			<br><br>
+
+			<h4>The application </h4>
+			<p> This app is a Flask (python front end ) with a mysql backend
+				<br><br> Code is available here: <a href="https://gitlab.com/librehealth/RadAIJournal"> https://gitlab.com/librehealth/RadAIJournal </a>				under MPL license
+			</p>
+
+			<h5> <u>Understanding your score </u></h5>
+			<p> We assume that the ground truth is the truth. You can read more on how the dataset was prepared here :
+			</p>
+			<p> For the human or machine , you are scored against the performance of the machine based on the ground truth. A zero score
+				is awarded when both machine and humans are correct or wrong. When humans miss a diagnosis but the machine is correct,
+				then they get a score of -1 . When the humans get the diagnosis , but the machine is wrong then you get a score of +1.
+
+				<br><br> See examples below to explain this concept
+			</p>
+
+			<div class="row">
+     <table class="table table-responsive table-bordered">
+       <thead>
+          <tr>
+            <th> Ground Truth </th>
+            <th>Human Correct</th>
+            <th> Machine Correct </th>
+            <th> Comment </th>
+            <th>Score Awarded</th>
+          </tr>
+      </thead>
+      <tbody>
+         <tr>
+          <td> 1 (Pneumonia present) </td>
+          <td> 1 (Pneumonia present) </td>
+          <td> 1 (Pneumonia present) </td>
+          <td> Both human and machine correctly identify pneumonia </td>
+          <td> 0 </td>
+          </tr>
+        <tr>
+          <td> 0 (Pneumonia absent) </td>
+          <td> 0 (Pneumonia absent) </td>
+          <td> 0 (Pneumonia absent) </td>
+          <td> Both human and machine correctly identify that the study is Negative for pneumonia  </td>
+          <td> 0 </td>
+          </tr>    
+
+          <tr>
+          <td> 1 (Pneumonia present) </td>
+          <td> 0 (Pneumonia <em>Absent</em>) </td>
+          <td> 1 (Pneumonia present) </td>
+          <td> Human misses pneumonia diagnosis while machine correctly identifies pneumonia </td>
+          <td> -1 </td>
+          </tr>
+
+          <tr>
+          <td> 1 (Pneumonia present) </td>
+          <td> 1 (Pneumonia present) </td>
+          <td> 0 (Pneumonia <em> Absent </em>) </td>
+          <td> Human gets the pneumonia diagnosis correct , but the machine misses the diagnosis  </td>
+          <td> +1 </td>
+          </tr>
+
+      </tbody>
+
+     </table>
+
+    </div>
+			<br>
+
+			<h4>Future work </h4>
+			<p>
+				We are planning to implement the following additional features 1. Touch the abnormality - to allow the person reading the
+				xray to annotate area of interest
+				<br> 2. Test labeling variation
+				<br> 3. Release an open source annotation tool to crowdsource labeling of medical images
+			</p>
+			<br>
+			<h4>Contact Us </h4>
+			<p> Having problems? Have feedback ? Looking for collaboration ? Send me an email at jgichoya AT iu.edu</a>
+
+				<br><br>
+	</main>
+</div>
+<!-- /.container-fluid -->
+
+{% endblock %}

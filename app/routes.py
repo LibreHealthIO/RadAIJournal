@@ -2,26 +2,38 @@
 
 import os
 import pandas as pd
+import pymysql
+import numpy as np
 
-from flask import render_template,Blueprint,flash,redirect,url_for,send_from_directory,request
+from flask import Flask, render_template,Blueprint,flash,redirect,url_for,send_from_directory,request,session,logging
+from passlib.hash import sha256_crypt
+from functools import wraps
+from flask_mail import Mail, Message
+from itsdangerous import URLSafeTimedSerializer
+
 from flask_bootstrap import __version__ as FLASK_BOOTSRAP_VERSION
 from flask_nav.elements import Navbar, View, Subgroup, Link, Text, Separator
 from flask_login import login_user, logout_user, current_user, login_required 
 from werkzeug.urls import url_parse
-from flask_mail import Mail, Message
 
 from markupsafe import escape
 
 from PIL import Image
 from io import StringIO
 
-from app import app, db
-from app.forms import LoginForm, XrayForm, RegisterForm
-from app.models import User, Report
+from sqlalchemy import create_engine,update
 
+from app import app, db
+from app.forms import LoginForm, XrayForm, RegisterForm, RegForm
+from app.models import User, Report, StatsTable, UserProfile
+
+#pandas for rendering worklists 
 mydata = pd.read_csv('app/static/FinalWorklist.csv')
 mydata['img_index'] = mydata['img']
 mydata.set_index('img_index',inplace=True)
+
+#Mail variables
+mail =Mail(app)
 
 #mail classes
 def generate_confirmation_token(email):
@@ -41,17 +53,33 @@ def confirm_token(token, expiration=600):
         return False
     return email
 
+# Check if user logged in
+def is_logged_in(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        #print(session)
+        if 'login_user' in session:
+            return f(*args, **kwargs)
+        else:
+            flash('Unauthorized, Please register and Confrim your email', 'danger')
+            return redirect(url_for('register'))
+    return wrap
 
 @app.route('/')
 @app.route('/index')
 def index():
-    return render_template('index.html', title= 'Nyumbani')
+    return render_template('index.html', title= 'Human v/s Machine')
 
 @app.route('/worklist')
-@login_required
+@is_logged_in
 def worklist():
-    #search the DB for all studies read by the current user 
-    reports = Report.query.filter_by(user_id=current_user.id)
+    #search the DB for all studies read by the current user
+    try: 
+        reports = Report.query.filter_by(user_id=current_user.id)
+    except:
+        flash("Cannot connect to the database, contact support","danger")
+        return redirect(url_for('worklist'))
+
     reports_count = reports.count()
     cxr_read = []
 
@@ -84,12 +112,115 @@ def worklist():
     return render_template('worklist.html',myworklist_data=myworklist_data)
 
 @app.route('/stats')
-@login_required
+@is_logged_in
 def stats():
-    return render_template('stats.html')
+    #Should not show stats to a user with an incomplete profile
+    try:
+        profile = UserProfile.query.filter_by(user_id = current_user.id)
+    except:
+        flash("Database connection error , contact support","danger")
+        return redirect(url_for('stats'))
+    
+    if profile.count() == 0 :
+        #no profile for user 
+        flash ("You need to complete your profile to view the leaderboard and results","info")
+        return redirect(url_for('profile'))
+        
+    #declare some variables
+    score=0
+    ground_truth=[]
+    prediction=[]
+    pneumonia=[]
+
+    #Query the report table
+    try:
+        reports = Report.query.filter_by(user_id=current_user.id)
+    except:
+        flash('Unable to connect to the database , contact support',category='danger')
+        return redirect(url_for('stats'))
+
+    if reports.count() > 0:
+        for report in reports:
+            ground_truth.append(int(report.ground_truth))
+            prediction.append(int(report.prediction))
+            pneumonia.append(int(report.pneumonia))
+        
+        #now create a dataframe with results 
+        df=pd.DataFrame({'ground_truth':ground_truth,'prediction':prediction,'Pneumonia':pneumonia})
+
+        conditions1 = [(df['ground_truth'] == df['prediction']) & (df['Pneumonia'] == df['ground_truth']),#Machine n human were right
+        (df['ground_truth'] != df['prediction']) & (df['Pneumonia'] != df['ground_truth']),  #Both were wrong
+        (df['ground_truth'] == df['prediction']) & (df['Pneumonia'] != df['ground_truth']), #Machine right, human wrong
+        (df['ground_truth'] != df['prediction']) & (df['Pneumonia'] == df['ground_truth'])]  #Machine wrong, human right
+        choices1 = [0, 0, -1, 1]
+        
+        conditions2 = [(df['Pneumonia'] == df['ground_truth']), #Check human accuracy
+        (df['Pneumonia'] != df['ground_truth'])] #Check human accuracy
+        choices2 = [1, 0]
+
+        conditions3 = [(df['ground_truth'] == df['prediction']), #Check machine accuracy
+        (df['ground_truth'] != df['prediction'])] #Check machine accuracy
+        choices3 = [1, 0]
+
+        df['individual scores'] = np.select(conditions1, choices1, default=np.nan)
+        df['Human Accuracy'] = np.select(conditions2, choices2, default=np.nan)
+        df['Machine Accuracy'] = np.select(conditions3, choices3, default=np.nan)
+
+        Total = sum(df['individual scores'])
+        Human_accuracy = (sum(df['Human Accuracy']/len(df)))*100
+        machine_accuracy = (sum(df['Machine Accuracy']/len(df)))*100
+
+        try:
+            stats_table = StatsTable.query.filter_by(user_id=current_user.id)
+        except:
+            flash('Unable to connect to the database , contact support',category='danger')
+            return redirect(url_for('stats'))
+
+        if stats_table.count()>0:
+            try:
+                db.session.query(StatsTable).filter_by(user_id=current_user.id).update({"total": Total,"human_accuracy":Human_accuracy,"machine_accuracy":machine_accuracy})
+                db.session.commit()
+            except:
+                flash('Unable to connect to the database , contact support',category='danger')
+                return redirect(url_for('stats'))
+        else:
+            try:
+                stats_table=StatsTable(user_id=current_user.id,total=Total,human_accuracy=Human_accuracy,machine_accuracy=machine_accuracy)
+                db.session.add(stats_table)
+                db.session.commit()
+            except:
+                flash('Unable to connect to the database , contact support',category='danger')
+                return redirect(url_for('stats'))
+
+    #Fetch stats 
+    try:
+        leader_table = db.session.query(StatsTable).filter().order_by(StatsTable.total.desc()).limit(5)
+    except:
+        flash('Unable to connect to the database , contact support',category='danger')
+        return redirect(url_for('stats'))
+
+    total_dummy = []
+    human_dummy=[]
+    machine_dummy=[]
+    user_dummy=[]
+
+    Total = 0
+    Human_accuracy = 0
+    machine_accuracy = 0
+    
+    leader_board = pd.DataFrame()
+
+    for i in leader_table:
+        user_dummy.append(int(i.user_id))
+        total_dummy.append(i.total)
+        human_dummy.append(int(i.human_accuracy))
+        machine_dummy.append(int(i.machine_accuracy))
+
+        leader_board=pd.DataFrame({'user':user_dummy,'total':total_dummy,'human_accuracy':human_dummy,'machine_accuracy':machine_dummy})
+    return render_template('stats.html',data=[current_user.id, Total, Human_accuracy,machine_accuracy],leader_board=leader_board)  
 
 @app.route('/study/<img_id>',methods=['GET','POST'])
-@login_required
+@is_logged_in
 def study(img_id):
     form = XrayForm()
     if request.method == 'GET':
@@ -171,16 +302,24 @@ def login():
         if user is None or not user.check_password(form.password.data):
             flash('Invalid username or password',category='danger')
             return redirect(url_for('login'))
+        if user.confirm =='NO':
+            flash('Unconfirmed account, Please check your mail to confirm',category='danger')
+            return redirect(url_for('login'))
+        if not user.check_password(form.password.data):
+            flash("Invalid password",'danger')
+            return redirect(url_for('login'))
         login_user(user, remember = form.remember_me.data)
         next_page = request.args.get('next')
+        session['login_user']=True
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(url_for('worklist'))
     return render_template("login.html",title="Sign In", form=form)
 
 @app.route('/logout')
-@login_required
+@is_logged_in
 def logout():
+    session.clear()
     logout_user()
     return redirect(url_for('index'))
 
@@ -196,89 +335,83 @@ def register():
         #save user
         db.session.add(user)
         db.session.commit()
-        flash('Congratulations, you are now a registered user!')
+        flash('Congratulations, you are now a registered user!. Check your email to confirm your account','success')
+
+        #generate email token 
+        email = form.email.data
+        token = generate_confirmation_token(email)
+        msg = Message('WELCOME TO HUMAN vs MACHINE COMPETITION', sender = 'judy@joleh.com', recipients = [email])
+        msg.body = "Hello Flask message sent from Flask-Mail"
+        confirm_url = url_for('confirm_email',token=token,_external=True)
+        msg.html = render_template('activate.html',confirm_url=confirm_url)
+        mail.send(msg)
+
         return redirect(url_for('login'))
     return render_template('register.html', title='Register', form=form)
 
-@app.route("/register2", methods=['GET', 'POST'])
-def register2():
-    form = RegisterForm(request.form)
-    if request.method == 'GET':
-        return render_template('register.html',form = form)
-    elif request.method == 'POST':
-        print(form.data)
+@app.route('/profile', methods=['GET', 'POST'])
+@is_logged_in
+def profile():
+    #check if currently logged in user has a profile 
+    try:
+        profile = UserProfile.query.filter_by(user_id = current_user.id)
+    except:
+        flash ("Cannot connect to the database , contact support","danger")
+        return redirect(url_for('profile'))
 
-        if request.form.get('email'):
-            user_email = request.form.get('email')
+    if profile.count() > 0:
+        #means profile is already existing 
+        flash ("You have an existing profile saved profile on file","info")
+        return redirect(url_for('index'))
 
-            #search the database and ensure that there is no duplicate email 
-            emails = User.query.filter_by(email=user_email)
-            if emails.count == 0:
-                #means the user email is unique 
-                pass
-            elif emails.count > 0 :
-                #duplicate email exists in the database 
-                flash("Email exists in the database!",category='danger')
-                return redirect(url_for('register'))
-        
-        
-        # Get first name
-        if request.form.get('first_name'):
-            user_first_name = request.form.get('first_name')
-        else:
-            user_first_name = ''
+    form=RegForm(request.form)
+    if form.validate_on_submit():
+        first_name = form.first_name.data
+        middle_name = form.middle_name.data
+        last_name = form.last_name.data
+        npi=int(form.npi.data)
+        doctor=form.doctor.data
+        radiologist=form.radiologist.data
+        training=form.training.data
+        clinical_practice=form.clinical_practice.data
+        clinical_specialty=form.clinical_specialty.data
+        clinical_specialty = ''.join(clinical_specialty)
+        institution_type = form.institution_type.data
+        country = request.form['country']
+        state = request.form['state']
+        userProfile=UserProfile(first_name=first_name,middle_name=middle_name,last_name=last_name,npi=npi,doctor=doctor,radiologist=radiologist,training=training,clinical_practice=clinical_practice,clinical_specialty=clinical_specialty,institution_type=institution_type,country=country,state=state,user_id=current_user.id)
 
-        # Get middle name
-        if request.form.get('middle_name'):
-            user_middle_name = request.form.get('middle_name')
-        else:
-            user_middle_name = ''
+        #save to DB 
+        try: 
+            db.session.add(userProfile)
+            db.session.commit()
+            flash('User profile saved successfully','success')
+            return redirect(url_for('worklist'))
+        except:
+            flash('Failed to save user profile !','danger')
+            return redirect(url_for('profile'))
 
-        # Get last name 
-        if request.form.get('last_name'):
-            user_last_name = request.form.get('last_name')
-        else:
-            user_last_name = ''
-
-        #Get NPI 
-        if request.form.get('npi'):
-            user_npi = request.form.get('npi')
-
-            # search for NPIs in the database 
-            npis = User.query.filter_by(npi=user_npi)
-            if npis.count == 0:
-                #means unique NPI 
-                pass
-            else:
-                flash("NPI exists in the database!",category='danger')
-                return redirect(url_for('register'))
-
-        #Get doctor quals 
-        doctor = request.form.get('doctor')
-
-        # Get radiologist 
-        radiologist = request.form.get('radiologist')
-
-        # Get training 
-        training = request.form.get('training')
-
-        # Get years of clinical practice 
-        practice = request.form.get('clinical_practice')
-
-        # Get institution type 
-        institution = request.form.get('institution_type')
-
-        # Get clinical_speciality
-        specialty = request.form.get('clinical_specialty')
-
-        # country 
-        country = request.form.get('country')
-
-        #state 
-        state = request.form.get('')
-        
-        return render_template('register.html',form = form)
+        return redirect(url_for('worklist'))
+    return render_template('profile.html', form=form)
 
 @app.errorhandler(404)
 def page_not_found(e):
     return render_template('404.html'), 404
+
+@app.route('/confirm/<token>')
+def confirm_email(token):
+    try:
+        email=confirm_token(token)
+    except:
+        flash('Invalid link','danger')
+    else:
+        user = User.query.filter_by(email=email).first()
+        user.confirm = 'YES'
+        db.session.commit()
+        session['user_email']=email
+        flash('Your account activation was successful!','success')
+        return redirect(url_for('login'))
+
+@app.route('/about')
+def about():
+    return render_template('about.html')

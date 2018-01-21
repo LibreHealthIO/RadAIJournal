@@ -7,7 +7,7 @@ from config import Config
 
 app = Flask(__name__)
 app.config.from_object(Config)
-app.debug = True
+app.debug = False
 
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
