@@ -1,4 +1,8 @@
 import os 
+import pymysql
+
+from sqlalchemy import create_engine
+
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
@@ -21,9 +25,6 @@ class Config(object):
 
     #MYSQL COnfigs
     SQLALCHEMY_DATABASE_URI = 'mysql://user:password@localhost/radAI'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    MYSQL_HOST = 'localhost'
-    MYSQL_USER = 'user'
-    MYSQL_PASSWORD = 'password'
-    MYSQL_DB = 'radAI'
 

@@ -9,6 +9,7 @@ class User(UserMixin,db.Model):
     password_hash = db.Column(db.String(128))
     remember_me = db.Column(db.Boolean)
     date_registered = db.Column(db.DateTime,index=True,default=datetime.utcnow)
+    confirm =db.Column(db.String(5),default="NO")
 
     def __repr__(self):
         return 'User {}>'.format(self.username)
@@ -28,17 +29,20 @@ class UserProfile(db.Model):
     first_name = db.Column(db.String(160))
     middle_name = db.Column(db.String(160))
     last_name = db.Column(db.String(160))
-    npi = db.Column(db.Integer,unique=True)
+    npi = db.Column(db.Integer)
     doctor = db.Column(db.String(32))
     radiologist = db.Column(db.String(32))
     training = db.Column(db.String(32))
     clinical_practice = db.Column(db.String(32))
-    clinical_specality = db.Column(db.String(32))
+    clinical_specialty = db.Column(db.String(32))
     institution_type = db.Column(db.String(32))
     country = db.Column(db.String(32))
     state = db.Column(db.String(32))
     user_id = db.Column(db.Integer,db.ForeignKey('user.id'))
     timestamp = db.Column(db.DateTime,index=True,default=datetime.utcnow)
+
+    def __repr__(self):
+        return 'User Profile {}>'.format(self.profile_id)
 
 class Report(db.Model):
     id = db.Column(db.Integer,primary_key=True)
@@ -57,4 +61,13 @@ class Report(db.Model):
         return 'Report {}>'.format(self.id)
 
     
+class StatsTable(db.Model):
+    stats_id = db.Column(db.Integer,primary_key=True)
+    user_id= db.Column(db.Integer,db.ForeignKey('user.id'))
+    total=db.Column(db.Integer)
+    human_accuracy=db.Column(db.FLOAT)
+    machine_accuracy=db.Column(db.FLOAT)
+    timestamp = db.Column(db.DateTime,index=True,default=datetime.utcnow)
 
+    def __repr__(self):
+        return 'Stats {}>'.format(self.stats_id)
