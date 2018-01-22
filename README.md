@@ -52,10 +52,9 @@ $ mysql> CREATE DATABASE radAI;
 To set this up on a new installation , delete the **migrations** folder  then run the following commands
 
 ```
-$ export FLASK_APP=radaijournal.py
-$ flask db init
-$ flask db migrate  #generates the migration script
-$ flask db upgrade  #Applies the changes to the database
+$ python manage.py db init
+$ python manage.py db migrate  #generates the migration script
+$ python manage.py db upgrade  #Applies the changes to the database
 ```
 
 ### Email setup
@@ -77,13 +76,7 @@ Assumes that you have
 
 #### Linux / Mac
 ```
-$ export FLASK_APP=radaijournal.py
-$ flask run
-```
-
-#### Windows
-```
-SET FLASK_APP=radaijournal.py
+$ python app/app.py
 ```
 
 Go to <a href="http://localhost:5000"> http://localhost:5000 </a>to access the application
