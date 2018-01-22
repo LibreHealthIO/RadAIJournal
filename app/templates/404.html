@@ -16,11 +16,9 @@
 
         <div class="row">
          <p class="text-center"> The page you are looking for can't be found. </p>
-          <img src="/static/logos/404.png" class="img-fluid" alt="Responsive image">
+          <img src="{{ url_for('static', filename='logos/404.gif')}}'" class="img-fluid" alt="Responsive image">
            <p class="text-center"><a href="{{ url_for('index') }}">Let's go somewhere nice</a> </p>
 
         </div>
 
 {% endblock %}
-
- 
