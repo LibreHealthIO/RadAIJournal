@@ -76,7 +76,7 @@ Assumes that you have
 
 #### Linux / Mac
 ```
-$ python app/app.py
+$ python radaijournal.py
 ```
 
 Go to <a href="http://localhost:5000"> http://localhost:5000 </a>to access the application
