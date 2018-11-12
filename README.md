@@ -1,3 +1,6 @@
+# Human versus Machine 
+<img src="app/static/logos/radai-machine-vs-man.svg.png" alt="Human versus Machine Artwork" width="40%">
+
 ### Installation - Requirements
 1. Python
 2. Virtualenv
