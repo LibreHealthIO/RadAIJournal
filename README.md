@@ -1,5 +1,5 @@
 # Human versus Machine 
-<img src="app/static/logos/radai-machine-vs-man.svg.png" alt="Human versus Machine Artwork" width="40%">
+<div align="center"><img src="app/static/logos/radai-machine-vs-man.svg.png" alt="Human versus Machine Artwork" width="40%"></div>
 
 ### Installation - Requirements
 1. Python
