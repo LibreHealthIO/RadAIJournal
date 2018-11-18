@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, validators, BooleanField, SubmitField, RadioField, SelectMultipleField, TextField, SelectField, FloatField, widgets , IntegerField
-from wtforms.validators import DataRequired, Length , EqualTo , Email , NumberRange
+from wtforms.validators import DataRequired, Length , EqualTo , Email , NumberRange , ValidationError
 
 from app.models import User , UserProfile
 
