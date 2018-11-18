@@ -5,7 +5,7 @@ import pandas as pd
 import pymysql
 import numpy as np
 
-from flask import Flask, render_template, Blueprint, flash, redirect, url_for, send_from_directory, request, session, logging
+from flask import Flask, render_template, Blueprint, flash, redirect, url_for, send_from_directory, request, session, logging , abort
 from passlib.hash import sha256_crypt
 from functools import wraps
 from flask_mail import Mail, Message
@@ -276,20 +276,23 @@ def study(img_id):
   form = XrayForm()
   if request.method == 'GET':
 
-    file_name = 'cxr/' + str(img_id)
-
-    #search for patient ID, Age and sex for the specific image we are rendering
-    img_data = mydata.loc[mydata['img'] == img_id]
-    if len(img_data) > 0:
-      #means there are metadata for that image
-      for index, row in img_data.iterrows():
-        img_details = {'pt_id': row.pt_id, 'age': row.age, 'sex': row.sex}
-    return render_template(
-        'study.html',
-        user_image=file_name,
-        image_details=img_details,
-        img_id=img_id,
-        form=form)
+    try:
+      file_name = 'cxr/' + str(img_id)
+      #search for patient ID, Age and sex for the specific image we are rendering
+      img_data = mydata.loc[mydata['img'] == img_id]
+      if len(img_data) > 0:
+        #means there are metadata for that image
+        for index, row in img_data.iterrows():
+          img_details = {'pt_id': row.pt_id, 'age': row.age, 'sex': row.sex}
+      return render_template(
+          'study.html',
+          user_image=file_name,
+          image_details=img_details,
+          img_id=img_id,
+          form=form)
+    except:
+      abort(404) # return 404 on wrong image id
+  
   elif request.method == 'POST':
     #validate that the forms data is correct
     # Pneumonia must be selected
