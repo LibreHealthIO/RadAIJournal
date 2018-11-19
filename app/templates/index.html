@@ -1,21 +1,21 @@
 {% extends "base.html" %} {% block content %}
 
 <div class="container-fluid">
-	<main role="main" class="col-sm-12 ml-lg-auto col-md-12 pt-3">
+	<main role="main" class="col-md-12">
 		<div class="row">
 			<h2 class="text-center">
 				<span style="color: purple;">
 						 Human versus Machine </span></h2>
 
-			<div class="row text-center">
-				  <img src="{{ url_for('static',filename='logos/radai.gif') }}" class="img-fluid" alt="Responsive image">
+			<div class="text-center">
+				  <img style=" max-width: 100%;height: auto;" src="{{ url_for('static',filename='logos/radai.gif') }}" class="img-fluid" width="auto" alt="Responsive image">
 			</div>
 		</div>
 		<!-- /.row -->
 		{% if current_user.is_anonymous %}
-		<p class="text-center"><a href="{{ url_for('login') }}">Login to get started</a> </p>
+		<div class="text-center"><a class="btn btn-primary" style="color:white;" href="{{ url_for('login') }}">Login to get started</a> </div>
 		{% else %}
-		<p class="text-center"><a href="{{ url_for('worklist') }}">Select a study to read</a> </p>
+		<div class="text-center"><a class="btn btn-primary" style="color:white;" href="{{ url_for('worklist') }}">Select a study to read</a> </div>
 		{% endif %}
 	</main>
 </div>
