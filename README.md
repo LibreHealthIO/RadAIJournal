@@ -1,4 +1,4 @@
-# Human versus Machine 
+# Human versus Machine
 <div align="center"><img src="app/static/logos/radai-machine-vs-man.svg.png" alt="Human versus Machine Artwork" width="40%"></div>
 
 ### Installation - Requirements
@@ -6,6 +6,7 @@
 2. Virtualenv
 3. Mysql
 4. Messaging service - stmp server
+5. [Git Large File Storage (LFS) Client](https://git-lfs.github.com)
 
 
 ### Installation - Configuration
