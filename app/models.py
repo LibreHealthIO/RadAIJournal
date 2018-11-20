@@ -29,7 +29,7 @@ class UserProfile(db.Model):
     first_name = db.Column(db.String(160))
     middle_name = db.Column(db.String(160))
     last_name = db.Column(db.String(160))
-    npi = db.Column(db.Integer)
+    npi = db.Column(db.String(11))
     doctor = db.Column(db.String(32))
     radiologist = db.Column(db.String(32))
     training = db.Column(db.String(32))
