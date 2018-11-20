@@ -443,7 +443,7 @@ def profile():
     first_name = form.first_name.data
     middle_name = form.middle_name.data
     last_name = form.last_name.data
-    npi = int(form.npi.data)
+    npi = form.npi.data
     doctor = form.doctor.data
     radiologist = form.radiologist.data
     training = form.training.data
