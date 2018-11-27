@@ -292,7 +292,7 @@ def study(img_id):
           form=form)
     except:
       abort(404) # return 404 on wrong image id
-  
+ 
   elif request.method == 'POST':
     #validate that the forms data is correct
     # Pneumonia must be selected

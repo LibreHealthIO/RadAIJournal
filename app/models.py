@@ -1,5 +1,5 @@
 from datetime import datetime
-from app import db, login 
+from app import db, login
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -60,7 +60,7 @@ class Report(db.Model):
     def __repr__(self):
         return 'Report {}>'.format(self.id)
 
-    
+   
 class StatsTable(db.Model):
     stats_id = db.Column(db.Integer,primary_key=True)
     user_id= db.Column(db.Integer,db.ForeignKey('user.id'))

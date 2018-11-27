@@ -20,7 +20,7 @@
                 {{ form.hidden_tag() }}
 
                 <div class="form-group row">
-                    <label for="first_name" class="col-sm-2 col-form-label"> {{ form.first_name.label }} </label> 
+                    <label for="first_name" class="col-sm-2 col-form-label"> {{ form.first_name.label }} </label>
                     <div class="col-sm-10">
                     {{ form.first_name(size=32) }}
                     {% for error in form.first_name.errors %}
@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="form-group row">
-                    <label for="middle_name" class="col-sm-2 col-form-label">  {{ form.middle_name.label }} </label> 
+                    <label for="middle_name" class="col-sm-2 col-form-label">  {{ form.middle_name.label }} </label>
                      <div class="col-sm-10">
                          {{ form.middle_name(size=32) }}
                          {% for error in form.middle_name.errors %}
@@ -40,7 +40,7 @@
                 </div>
 
                 <div class="form-group row">
-                    <label for="last_name" class="col-sm-2 col-form-label">  {{ form.last_name.label }} </label> 
+                    <label for="last_name" class="col-sm-2 col-form-label">  {{ form.last_name.label }} </label>
                     <div class="col-sm-10">
                     {{ form.last_name(size=32) }}
                     {% for error in form.last_name.errors %}
@@ -50,7 +50,7 @@
                 </div>
 
                 <div class="form-group row">
-                    <label for="npi" class="col-sm-2 col-form-label"> {{ form.npi.label }}  </label> 
+                    <label for="npi" class="col-sm-2 col-form-label"> {{ form.npi.label }}  </label>
                     <div class="col-sm-10">
                          {{ form.npi(size=32) }}
                          {% for error in form.npi.errors %}
@@ -62,9 +62,9 @@
                 </div>
 
                 <div class="form-group row">
-                     <label for="doctor" class="col-sm-2 col-form-label"> {{ form.doctor.label }}  </label> 
+                     <label for="doctor" class="col-sm-2 col-form-label"> {{ form.doctor.label }}  </label>
                       <div class="col-sm-10">
-                           {{ form.doctor() }} 
+                           {{ form.doctor() }}
                            {% for error in form.doctor.errors %}
                     <span style="color: red;">[{{ error }}]</span>
                     {% endfor %}
@@ -72,7 +72,7 @@
                 </div>
 
                 <div class="form-group row">
-                     <label for="radiologist" class="col-sm-2 col-form-label">  {{ form.radiologist.label }}  </label> 
+                     <label for="radiologist" class="col-sm-2 col-form-label">  {{ form.radiologist.label }}  </label>
                     <div class="col-sm-10">
                         {{ form.radiologist() }}
                          {% for error in form.radiologist.errors %}
@@ -82,7 +82,7 @@
                 </div>
 
                 <div class="form-group row">
-                     <label for="training" class="col-sm-2 col-form-label"> {{ form.training.label }}  </label> 
+                     <label for="training" class="col-sm-2 col-form-label"> {{ form.training.label }}  </label>
                      <div class="col-sm-10">
                          {{ form.training() }}
                           {% for error in form.training.errors %}
@@ -92,7 +92,7 @@
                 </div>
 
                 <div class="form-group row">
-                     <label for="practice" class="col-sm-2 col-form-label">  {{ form.clinical_practice.label }} </label> 
+                     <label for="practice" class="col-sm-2 col-form-label">  {{ form.clinical_practice.label }} </label>
                      <div class="col-sm-10">
                          {{ form.clinical_practice() }}
                          {% for error in form.clinical_practice.errors %}
@@ -100,9 +100,9 @@
                     {% endfor %}
                      </div>
                 </div>
-                                    
+                                   
                 <div class="form-group row">
-                     <label for="clinical_specialty" class="col-sm-2 col-form-label">  {{ form.clinical_specialty.label }} </label> 
+                     <label for="clinical_specialty" class="col-sm-2 col-form-label">  {{ form.clinical_specialty.label }} </label>
                      <div class="col-sm-10">
                          {{ form.clinical_specialty() }}
                          {% for error in form.clinical_specialty.errors %}
@@ -112,7 +112,7 @@
                 </div>
 
                 <div class="form-group row">
-                     <label for="institution_type" class="col-sm-2 col-form-label">  {{ form.institution_type.label }} </label> 
+                     <label for="institution_type" class="col-sm-2 col-form-label">  {{ form.institution_type.label }} </label>
                     <div class="col-sm-10">
                         {{ form.institution_type() }}
                         {% for error in form.institution_type.errors %}
@@ -376,7 +376,7 @@
                         <option value="ZM">Zambia</option>
                         <option value="ZW">Zimbabwe</option>
                         </select>
-                
+               
                  </div>
                 </div>
 
@@ -444,7 +444,7 @@
                </div>
                <br>
                <br>
-	
+
             </form>
 
 
@@ -455,4 +455,4 @@
 <!-- /.container-fluid -->
 {% endblock %}
 
-    
+   

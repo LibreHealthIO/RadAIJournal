@@ -48,7 +48,7 @@ class RegForm(FlaskForm):
     clinical_specialty = MultiCheckboxField('What is your clinical specialty?', choices=[('Body_Abdomen','Body/Abdomen'),('Head_Neck','Head and Neck'),('Nuclear_Medicine','Nuclear Medicine'),('MSK','MSK'),('Pediatrics','Pediatrics'),('Breast','Breast'),('Chest_Cardiac','Chest/Cardiac'),('Interventional_Radiology','Interventional Radiology'),('ER_General','ER/General'),('N/A','N/A')])
     institution_type = RadioField('Institution type',choices=[('private', 'Private practice'), ('academic', 'Academic'),('N/A','N/A')])
     submit = SubmitField('submit')
-    
+   
     def validate_npi(self, npi):
         user = UserProfile.query.filter_by(npi=npi.data).first()
         if npi.data == "0000000000" :
@@ -63,10 +63,10 @@ class RegForm(FlaskForm):
             else:
                 raise ValidationError('This NPI number is already used.')
                 return False
-            
+           
 
 def npi_is_valid(npi):
     LUHN_PREFIX = "80840"
     prefixed_number = "%s%s" % (LUHN_PREFIX, npi)
     return verify(prefixed_number)
-    
+   
